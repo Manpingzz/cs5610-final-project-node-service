@@ -46,6 +46,9 @@ app.use(express.json());
 UserRoutes(app);
 app.use(commonRoutes);
 // app.use("/api/users", UserRoutes);
+app.get("/", (req, res) => {
+  res.send("Welcome to my application!");
+});
 
 app.listen(process.env.PORT || 4000);
 
