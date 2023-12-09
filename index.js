@@ -6,14 +6,25 @@ import UserRoutes from "./users/routes.js";
 import "dotenv/config";
 import commonRoutes from "./comments/commonRoutes.js";
 
-mongoose.connect("mongodb://127.0.0.1:27017/project");
+// mongoose.connect("mongodb://127.0.0.1:27017/project");
+const CONNECTION_STRING1 =
+  process.env.DB_CONNECTION_STRING1 || "mongodb://127.0.0.1:27017/project";
+// mongoose.connect(CONNECTION_STRING);
+console.log(CONNECTION_STRING1);
+mongoose
+  .connect(CONNECTION_STRING1, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log(CONNECTION_STRING1))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 const app = express();
 
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL,
   })
 );
 const sessionOptions = {
@@ -21,6 +32,14 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
 };
+if (process.env.NODE_ENV !== "development") {
+  sessionOptions.proxy = true;
+  sessionOptions.cookie = {
+    sameSite: "none",
+    secure: true,
+  };
+}
+
 app.use(session(sessionOptions));
 app.use(express.json());
 
