@@ -20,11 +20,6 @@ function UserRoutes(app) {
     const user = await dao.findUserByUsername(username);
     res.json(user);
   };
-  //   const findUserByCredentials = async (req, res) => {
-  //     const { username, password } = req.params;
-  //     const user = await dao.findUserByCredentials(username, password);
-  //     res.json(user);
-  //   };
 
   const findUserByCredentials = async (username, password) => {
     console.log(`Searching for user: ${username} with password: ${password}`);
@@ -92,27 +87,6 @@ function UserRoutes(app) {
     }
   };
 
-  // const createComment = async (req, res) => {
-  //   try {
-  //     console.log("Received POST request to create a new comment.");
-  //     const { userId, movieId, comment } = req.body;
-
-  //     // 确保 userId 存在
-  //     if (!userId) {
-  //       return res.status(400).json({ message: "userId is required" });
-  //     }
-  //     const savedComment = await dao.createComment({
-  //       userId,
-  //       movieId,
-  //       comment,
-  //     });
-  //     console.log("savedComment:", savedComment);
-  //     res.status(201).json(savedComment);
-  //   } catch (error) {
-  //     console.error("Error occurred while creating a comment:", error);
-  //     res.status(500).json({ message: error.message });
-  //   }
-  // };
 
   const signout = async (req, res) => {
     // currentUser = null;
@@ -181,7 +155,7 @@ function UserRoutes(app) {
       });
     }
 
-    const token = authHeader.split(" ")[1]; // 提取令牌
+    const token = authHeader.split(" ")[1]; 
     console.log("token123:", token);
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
