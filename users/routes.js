@@ -7,7 +7,6 @@ import jwt from "jsonwebtoken";
 function UserRoutes(app) {
   const findAllUsers = async (req, res) => {
     const users = await dao.findAllUsers();
-    console.log("all users:", users);
     res.json(users);
   };
   const findUserById = async (req, res) => {
@@ -22,9 +21,7 @@ function UserRoutes(app) {
   };
 
   const findUserByCredentials = async (username, password) => {
-    console.log(`Searching for user: ${username} with password: ${password}`);
     const user = await model.findOne({ username, password });
-    console.log(`Found user: `, user);
     return user;
   };
 
@@ -36,15 +33,13 @@ function UserRoutes(app) {
 
   const createUser = async (req, res) => {
     const user = await dao.createUser(req.body);
-    console.log("user88:", user);
     res.json(user);
   };
 
   const updateUser = async (req, res) => {
     const id = req.params.id;
     const newUser = req.body;
-    console.log("Received update request for ID:", id);
-    console.log("New user data:", newUser);
+
     const status = await dao.updateUser(id, newUser);
     const currentUser = await dao.findUserById(id);
     req.session["currentUser"] = currentUser;
@@ -64,15 +59,12 @@ function UserRoutes(app) {
 
   const signin = async (req, res) => {
     try {
-      console.log("Login Request:", req.body);
       const user = await dao.findUserByUsername(req.body.username);
 
       if (user && req.body.password === user.password) {
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
           expiresIn: "1h",
         });
-
-        console.log("Generated JWT:", token);
 
         const userWithoutPassword = user.toObject();
         delete userWithoutPassword.password;
@@ -86,7 +78,6 @@ function UserRoutes(app) {
       res.status(500).json({ message: error.message });
     }
   };
-
 
   const signout = async (req, res) => {
     // currentUser = null;
@@ -111,9 +102,7 @@ function UserRoutes(app) {
         lastName,
       };
 
-      console.log("Creating user with:", newUser);
       const savedUser = await dao.createUser(newUser);
-      console.log("User created:", savedUser);
 
       const { password: _, ...userWithoutPassword } = savedUser.toObject();
       res.json(userWithoutPassword);
@@ -147,7 +136,6 @@ function UserRoutes(app) {
 
   const verifyToken = (req, res) => {
     const authHeader = req.headers.authorization;
-    console.log("authHeader", authHeader);
     if (!authHeader) {
       return res.status(401).json({
         valid: false,
@@ -155,8 +143,7 @@ function UserRoutes(app) {
       });
     }
 
-    const token = authHeader.split(" ")[1]; 
-    console.log("token123:", token);
+    const token = authHeader.split(" ")[1];
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       // req.user = decoded;
@@ -169,7 +156,6 @@ function UserRoutes(app) {
   app.post("/api/users/:userId/watchlist", async (req, res) => {
     try {
       const userId = req.params.userId;
-      console.log("userId 789:", userId);
       const movieId = req.body.movieId;
 
       const user = await dao.findUserById(userId);

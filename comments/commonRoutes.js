@@ -46,11 +46,6 @@ commonRoutes.post("/api/comments", async (req, res) => {
         .status(400)
         .json({ message: "Invalid rating. Must be between 1 and 5." });
     }
-    console.log("Received comment data:");
-    console.log("userId:", userId);
-    console.log("movieId:", movieId);
-    console.log("comment:", comment);
-    console.log("rating:", rating);
 
     const savedComment = await createComment({
       userId,
@@ -84,7 +79,6 @@ commonRoutes.post("/api/comments", async (req, res) => {
 commonRoutes.get("/api/comments/:movieId", async (req, res) => {
   try {
     const comments = await getCommentsForMovie(req.params.movieId);
-    console.log("comments66:", comments);
 
     res.json(comments);
   } catch (error) {
@@ -116,7 +110,6 @@ commonRoutes.delete("/api/comments/:commentId", async (req, res) => {
     // const currentUser = req.session["currentUser"];
     // console.log("Current user from session:", currentUser);
     const authHeader = req.headers.authorization;
-    console.log("authHeader:", authHeader);
     if (!authHeader) {
       return res
         .status(401)
@@ -124,23 +117,19 @@ commonRoutes.delete("/api/comments/:commentId", async (req, res) => {
     }
 
     const token = authHeader.split(" ")[1];
-    console.log("token1206:", token);
     let userId;
 
     try {
       console.log("Verifying token:", token);
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("decoded 1206::", decoded);
 
       userId = decoded.userId;
-      console.log("userId 1206::", userId);
     } catch (error) {
       console.error("Error verifying token:", error);
       return res.status(403).json({ message: "Invalid or expired token" });
     }
 
     const currentUser = await User.findById(userId);
-    console.log("currentUser1206:", currentUser);
 
     if (!currentUser) {
       return res.status(403).json({ message: "User not found" });
