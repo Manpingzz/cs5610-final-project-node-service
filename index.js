@@ -9,15 +9,13 @@ import commonRoutes from "./comments/commonRoutes.js";
 // mongoose.connect("mongodb://127.0.0.1:27017/project");
 const CONNECTION_STRING1 =
   process.env.DB_CONNECTION_STRING1 || "mongodb://127.0.0.1:27017/project";
-// mongoose.connect(CONNECTION_STRING);
-console.log(CONNECTION_STRING1);
-mongoose
-  .connect(CONNECTION_STRING1, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log(CONNECTION_STRING1))
-  .catch((err) => console.error("MongoDB connection error:", err));
+
+mongoose.connect(CONNECTION_STRING1, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+// .then(() => console.log(CONNECTION_STRING1))
+// .catch((err) => console.error("MongoDB connection error:", err));
 
 const app = express();
 
